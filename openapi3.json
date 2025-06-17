@@ -1,0 +1,5140 @@
+{
+  "openapi" : "3.1.0",
+  "info" : {
+    "description" : "API for Jutro App Admin Service (JAAS), enabling Jutro App Admin UI to create and manage Jutro apps hosted in GWCP.",
+    "title" : "Jutro App Admin Service (JAAS) API.",
+    "version" : "5.55.0-dirty"
+  },
+  "servers" : [ {
+    "url" : "https://jutroappadminservice.api.int.ccs.guidewire.net"
+  } ],
+  "security" : [ {
+    "guidewire" : [ ]
+  } ],
+  "paths" : {
+    "/api/v1/application-clones" : {
+      "post" : {
+        "description" : "Clones Jutro application within the existing project.<br /><br />This operation requires GWCP user groups for the requested tenant and the requested project granting one of the roles: **jaa.developers** or **jaa.admins** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.applications.create** and one of the scopes: **any.tenant** or **tenant.[requested tenant]**.",
+        "operationId" : "cloneApplication",
+        "parameters" : [ {
+          "description" : "The id of the tenant containing the app to clone",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "xacme",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The id of the project containing the app to clone",
+          "in" : "query",
+          "name" : "projectId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "gwcpdev",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The name of the app to clone",
+          "in" : "query",
+          "name" : "sourceApp",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "myapp",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The name of the git branch to clone code from",
+          "in" : "query",
+          "name" : "gitRef",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "main",
+            "minLength" : 1
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ApplicationCloningModel"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "202" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/TaskQueryModel"
+                }
+              }
+            },
+            "description" : "Cloning Jutro application process has successfully started."
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          },
+          "404" : {
+            "description" : "No application found to clone."
+          }
+        },
+        "summary" : "Clones Jutro application",
+        "tags" : [ "Application clones" ]
+      }
+    },
+    "/api/v1/backend-apis-config-groups" : {
+      "get" : {
+        "description" : "Retrieves backend api configuration groups.<br /><br />This operation requires GWCP user groups for the requested tenant and any project granting one of the roles: **jaa.readonly** or **jaa.developers** or **jaa.operators** or **jaa.admins** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.backend-apis-config-groups.read** and one of the scopes: **any.tenant** or **tenant.[requested tenant]**.",
+        "operationId" : "getBackendApisConfigGroups",
+        "parameters" : [ {
+          "description" : "The id of the tenant.",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "xacme",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The logical id of the project.",
+          "in" : "query",
+          "name" : "logicalProjectId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "gwcp",
+            "maxLength" : 2147483647,
+            "minLength" : 1
+          }
+        }, {
+          "description" : "A name of a Jutro application",
+          "in" : "query",
+          "name" : "appName",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "appname",
+            "maxLength" : 2147483647,
+            "minLength" : 1
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/BackendApisConfigGroupQueryModel"
+                  }
+                }
+              }
+            },
+            "description" : "Backend API config groups data successfully retrieved."
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          }
+        },
+        "summary" : "Retrieves backend api configuration groups",
+        "tags" : [ "Backend API Configuration Groups" ]
+      }
+    },
+    "/api/v1/code-metadata" : {
+      "get" : {
+        "description" : "Fetches metadata about the application from its source code.<br /><br />This operation requires GWCP user groups for the requested tenant and the requested project granting one of the roles: **jaa.readonly** or **jaa.developers** or **jaa.operators** or **jaa.admins** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.vcs-refs.read** and one of the scopes: **any.tenant** or **tenant.[requested tenant]**.",
+        "operationId" : "getCodeMetadata",
+        "parameters" : [ {
+          "description" : "The id of the tenant.",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "xacme",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The id of the project.",
+          "in" : "query",
+          "name" : "projectId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "gwcpdev",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The name of the Jutro application.",
+          "in" : "query",
+          "name" : "appName",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "appname"
+          }
+        }, {
+          "description" : "The Git reference for retrieving metadata.",
+          "in" : "query",
+          "name" : "gitRef",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "develop"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CodeMetadataQueryModel"
+                }
+              }
+            },
+            "description" : "App code metadata successfully retrieved."
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          },
+          "404" : {
+            "description" : "Could not find metadata for the application with given parameters."
+          }
+        },
+        "summary" : "Retrieves application code metadata",
+        "tags" : [ "Code Metadata" ]
+      }
+    },
+    "/api/v1/deployment-variables" : {
+      "get" : {
+        "deprecated" : true,
+        "description" : "Retrieves default deployment variables for specific Jutro application.<br /><br />This operation requires GWCP user groups for the requested tenant and the requested project granting one of the roles: **jaa.readonly** or **jaa.developers** or **jaa.operators** or **jaa.admins** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.deployment-variables.read** and one of the scopes: **any.tenant** or **tenant.[requested tenant]**.",
+        "operationId" : "listDeploymentVariables_1",
+        "parameters" : [ {
+          "description" : "The id of the tenant.",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "xacme",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The id of the project.",
+          "in" : "query",
+          "name" : "projectId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "gwcpdev",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The name of the Jutro application to get deployment variables for.",
+          "in" : "query",
+          "name" : "appName",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "appname",
+            "maxLength" : 2147483647,
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The project class.",
+          "in" : "query",
+          "name" : "projectClass",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "dev",
+            "maxLength" : 2147483647,
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The planet name for the target IS instance used for the app backend.",
+          "in" : "query",
+          "name" : "insuranceSuiteEnvironment",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "insuranceSuiteEnvironment",
+            "maxLength" : 2147483647,
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The commit hash of the build to deploy, used to prepopulate environment variables for deployment based on source code",
+          "in" : "query",
+          "name" : "gitRef",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "p07332b348b",
+            "maxLength" : 2147483647,
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The configuration group id for BFF to be provisioned for this deployment",
+          "in" : "query",
+          "name" : "bffConfigurationGroup",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid",
+            "example" : "017e12ef-9c13-740a-ae8a-c87eee21edc0"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/DeploymentVariablesQueryModelV1"
+                }
+              }
+            },
+            "description" : "Deployment variables successfully retrieved."
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          }
+        },
+        "summary" : "Retrieves default deployment variables",
+        "tags" : [ "Deployment variables" ]
+      }
+    },
+    "/api/v1/domain-delegation-assignments" : {
+      "delete" : {
+        "description" : "Delete assignments for a domain delegation in a tenant and project.<br /><br />This operation requires GWCP user groups for the requested tenant and the requested project granting one of the roles: **jaa.admins** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.domain-assignments.delete** and one of the scopes: **any.tenant** or **tenant.[requested tenant]**.",
+        "operationId" : "deleteDelegationAssignments",
+        "parameters" : [ {
+          "description" : "The id of the tenant.",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "tenantId",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The id of the project in which the domain delegation was registered",
+          "in" : "query",
+          "name" : "projectId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "projectId",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The name of the Jutro application",
+          "in" : "query",
+          "name" : "appName",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "appname",
+            "minLength" : 1
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "array",
+                "description" : "UUIDs for the delegation assignments to delete",
+                "example" : [ "019276cf-82d4-77db-8d9b-dafabc88e70a", "019276cf-ab01-76a2-9dbd-69d02c803295" ],
+                "items" : {
+                  "type" : "string",
+                  "format" : "uuid",
+                  "example" : [ "019276cf-82d4-77db-8d9b-dafabc88e70a", "019276cf-ab01-76a2-9dbd-69d02c803295" ]
+                },
+                "uniqueItems" : true
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Accepted. Subdomains have been deleted."
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          }
+        },
+        "summary" : "Delete assignments for a domain delegation in a tenant and project",
+        "tags" : [ "Domain delegation assignments" ]
+      },
+      "get" : {
+        "description" : "Lists domain delegation assignments assigned to an application.<br /><br />This operation requires GWCP user groups for the requested tenant and the requested project granting one of the roles: **jaa.readonly** or **jaa.developers** or **jaa.operators** or **jaa.admins** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.domain-assignments.read** and one of the scopes: **any.tenant** or **tenant.[requested tenant]**.",
+        "operationId" : "listDelegationAssignments",
+        "parameters" : [ {
+          "description" : "The id of the tenant.",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "tenantId",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The id of the project in which the domain delegation was registered.",
+          "in" : "query",
+          "name" : "projectId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "projectId",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The name of the application.",
+          "in" : "query",
+          "name" : "appName",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "appname",
+            "maxLength" : 2147483647,
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The id of the domain delegation",
+          "in" : "query",
+          "name" : "delegationId",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/DomainDelegationAssignmentQueryModel"
+                  }
+                }
+              }
+            },
+            "description" : "Ok. Domain delegation assignments have been returned."
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          }
+        },
+        "summary" : "Lists domain delegation assignments for an application",
+        "tags" : [ "Domain delegation assignments" ]
+      },
+      "post" : {
+        "description" : "Assigns domain delegations to an application.<br /><br />This operation requires GWCP user groups for the requested tenant and the requested project granting one of the roles: **jaa.admins** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.domain-assignments.create** and one of the scopes: **any.tenant** or **tenant.[requested tenant]**.",
+        "operationId" : "createDelegationAssignments",
+        "parameters" : [ {
+          "description" : "The id of the tenant.",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "tenantId",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The id of the application project.",
+          "in" : "query",
+          "name" : "projectId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "projectId",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The name of the application.",
+          "in" : "query",
+          "name" : "appName",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "appname",
+            "minLength" : 1
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "array",
+                "description" : "Domain delegation assignments.",
+                "items" : {
+                  "$ref" : "#/components/schemas/DomainDelegationAssignmentRequestModel"
+                }
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Ok. Domain delegations have been successfully assigned."
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          }
+        },
+        "summary" : "Assigns domain delegations to an application",
+        "tags" : [ "Domain delegation assignments" ]
+      }
+    },
+    "/api/v1/domain-delegation-details" : {
+      "get" : {
+        "description" : "Gets Route53 domain details for a given domain delegation.<br /><br />This operation requires GWCP user groups for the requested tenant and any project granting one of the roles: **jaa.readonly** or **jaa.developers** or **jaa.operators** or **jaa.admins** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.domain-delegations.read** and one of the scopes: **any.tenant** or **tenant.[requested tenant]**.",
+        "operationId" : "getDomainDelegationDetails",
+        "parameters" : [ {
+          "description" : "The id of the tenant.",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "tenantId",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The domain delegation id",
+          "in" : "query",
+          "name" : "delegationId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/DomainDelegationDetailsQueryModel"
+                }
+              }
+            },
+            "description" : "Domain delegation details retrieved successfully"
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          }
+        },
+        "summary" : "Gets Route53 domain details for a given domain delegation",
+        "tags" : [ "Domain Delegation Details" ]
+      }
+    },
+    "/api/v1/domain-delegations" : {
+      "delete" : {
+        "description" : "Deletes a domain delegation from a given tenant.<br /><br />This operation requires GWCP user groups for the requested tenant and any project granting one of the roles: **jaa.admins** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.domain-delegations.delete** and one of the scopes: **any.tenant** or **tenant.[requested tenant]**.",
+        "operationId" : "deleteDomainDelegation",
+        "parameters" : [ {
+          "description" : "The ID of the domain delegation to delete",
+          "in" : "query",
+          "name" : "delegationId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }, {
+          "description" : "The id of the tenant.",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "tenantId",
+            "minLength" : 1
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Domain Delegation was successfully deleted"
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          }
+        },
+        "summary" : "Deletes a domain delegation from a given tenant",
+        "tags" : [ "Domain Delegations" ]
+      },
+      "get" : {
+        "description" : "Retrieves all domain delegations for a given tenant and project.<br /><br />This operation requires GWCP user groups for the requested tenant and any project granting one of the roles: **jaa.readonly** or **jaa.developers** or **jaa.operators** or **jaa.admins** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.domain-delegations.read** and one of the scopes: **any.tenant** or **tenant.[requested tenant]**.",
+        "operationId" : "getDomainDelegations",
+        "parameters" : [ {
+          "description" : "The id of the tenant.",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "tenantId",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The id of the project in which the domain delegations were registered.",
+          "in" : "query",
+          "name" : "projectId",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "projectId",
+            "maxLength" : 2147483647,
+            "minLength" : 1
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/DomainDelegationQueryModel"
+                  }
+                }
+              }
+            },
+            "description" : "Domain delegation retrieval has successfully completed"
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          }
+        },
+        "summary" : "Gets domain delegations for a given tenant and project",
+        "tags" : [ "Domain Delegations" ]
+      },
+      "post" : {
+        "description" : "Creates a domain delegation in the tenant using a given project.<br /><br />This operation requires GWCP user groups for the requested tenant and the requested project granting one of the roles: **jaa.admins** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.domain-delegations.create** and one of the scopes: **any.tenant** or **tenant.[requested tenant]**.",
+        "operationId" : "createDomainDelegation",
+        "parameters" : [ {
+          "description" : "The id of the tenant.",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "tenantId",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The id of the project to create the domain delegation in.",
+          "in" : "query",
+          "name" : "projectId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "projectId",
+            "minLength" : 1
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "array",
+                "description" : "Domains to be included in the delegation. Neither a prefixed protocol (http:// or https://) or a trailing slash (\"/\") should be included; e.g., do not enter http://citybikes123.com/, do enter citybikes123.com",
+                "example" : [ "domain1.com", "domain2.com" ],
+                "items" : {
+                  "type" : "string",
+                  "example" : [ "domain1.com", "domain2.com" ]
+                },
+                "uniqueItems" : true
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/DomainDelegationQueryModel"
+                }
+              }
+            },
+            "description" : "Domain delegation registration has completed successfully"
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          }
+        },
+        "summary" : "Creates a domain delegation in the tenant using a given project",
+        "tags" : [ "Domain Delegations" ]
+      },
+      "put" : {
+        "description" : "Revalidates the certificate for a given domain delegation.<br /><br />This operation requires GWCP user groups for the requested tenant and any project granting one of the roles: **jaa.admins** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.domain-delegations.update** and one of the scopes: **any.tenant** or **tenant.[requested tenant]**.",
+        "operationId" : "revalidateDomainDelegationCertificate",
+        "parameters" : [ {
+          "description" : "The ID of the domain delegation to revalidate",
+          "in" : "query",
+          "name" : "delegationId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }, {
+          "description" : "The id of the tenant.",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "tenantId",
+            "minLength" : 1
+          }
+        } ],
+        "responses" : {
+          "202" : {
+            "description" : "Revalidation process has successfully started"
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          },
+          "404" : {
+            "description" : "The domain does not exist"
+          }
+        },
+        "summary" : "Revalidates the certificate for a given domain delegation",
+        "tags" : [ "Domain Delegations" ]
+      }
+    },
+    "/api/v1/environment-classes" : {
+      "get" : {
+        "description" : "Given tenant id, retrieves available environment classes.<br /><br />This operation requires GWCP user groups for the requested tenant and any project granting one of the roles: **jaa.readonly** or **jaa.developers** or **jaa.operators** or **jaa.admins** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.environment-classes.read** and one of the scopes: **any.tenant** or **tenant.[requested tenant]**.",
+        "operationId" : "getPlanetClasses",
+        "parameters" : [ {
+          "description" : "The id of the tenant.",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "xacme",
+            "minLength" : 1
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string",
+                    "enum" : [ "prod", "other" ]
+                  },
+                  "uniqueItems" : true
+                }
+              }
+            },
+            "description" : "Environment classes successfully retrieved."
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          }
+        },
+        "summary" : "Gets environment classes for ip assignments",
+        "tags" : [ "Environment Classes" ]
+      }
+    },
+    "/api/v1/environments" : {
+      "get" : {
+        "description" : "Gets the environments of a particular project which are namespaced.<br /><br />This operation requires GWCP user groups for the requested tenant and the requested project granting one of the roles: **jaa.readonly** or **jaa.developers** or **jaa.operators** or **jaa.admins** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.environments.read** and one of the scopes: **any.tenant** or **tenant.[requested tenant]**.",
+        "operationId" : "listEnvironments",
+        "parameters" : [ {
+          "description" : "The id of the tenant.",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "xacme",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The id of the project to retrieve.",
+          "in" : "query",
+          "name" : "projectId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "gwcpdev",
+            "minLength" : 1
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/EnvironmentQueryModel"
+                  }
+                }
+              }
+            },
+            "description" : "Environments data successfully retrieved."
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          },
+          "404" : {
+            "description" : "Could not find Environments data with given parameters."
+          }
+        },
+        "summary" : "Gets the environments of a project which are namespaced",
+        "tags" : [ "Environments" ]
+      }
+    },
+    "/api/v1/feature-flags" : {
+      "delete" : {
+        "description" : "Delete the value of a feature flag for a given context.<br /><br />This operation requires GWCP user groups for all tenants and all projects granting one of the roles: **jaa.operators** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.feature-flags.delete** and the scope: **any.tenant**.",
+        "operationId" : "deleteFeatureFlag",
+        "parameters" : [ {
+          "description" : "The feature flag name.",
+          "in" : "query",
+          "name" : "flagName",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "flagName",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The id of the tenant if the feature flag was tenant specific.",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "xacme",
+            "maxLength" : 2147483647,
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The id of the project if setting layer is project.",
+          "in" : "query",
+          "name" : "projectId",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "gwcpdev",
+            "maxLength" : 2147483647,
+            "minLength" : 1
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "array",
+                "description" : "Feature flag props to delete.",
+                "items" : {
+                  "type" : "string"
+                },
+                "uniqueItems" : true
+              }
+            }
+          }
+        },
+        "responses" : {
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          }
+        },
+        "summary" : "Deletes feature flag",
+        "tags" : [ "Feature Flags" ]
+      },
+      "get" : {
+        "description" : "Retrieves feature flags for a given tenant/star system/application.<br /><br />This operation requires GWCP user groups for the requested tenant and any project granting one of the roles: **jaa.readonly** or **jaa.developers** or **jaa.operators** or **jaa.admins** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.feature-flags.read** and one of the scopes: **any.tenant** or **tenant.[requested tenant]**.",
+        "operationId" : "getFeatureFlags",
+        "parameters" : [ {
+          "description" : "The id of the tenant.",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "xacme",
+            "maxLength" : 2147483647,
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The id of the project.",
+          "in" : "query",
+          "name" : "projectId",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "gwcpdev",
+            "maxLength" : 2147483647,
+            "minLength" : 1
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "object",
+                  "additionalProperties" : {
+                    "$ref" : "#/components/schemas/FlagValueQueryModel"
+                  }
+                }
+              }
+            },
+            "description" : "Feature flags successfully retrieved."
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          }
+        },
+        "summary" : "Retrieves feature flags",
+        "tags" : [ "Feature Flags" ]
+      },
+      "post" : {
+        "description" : "Creates a feature flag for a given context.<br /><br />This operation requires GWCP user groups for all tenants and all projects granting one of the roles: **jaa.operators** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.feature-flags.create** and the scope: **any.tenant**.",
+        "operationId" : "createFeatureFlag",
+        "parameters" : [ {
+          "description" : "The id of the tenant if setting value is tenant specific. Also applies for if layer is tenant",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "xacme",
+            "maxLength" : 2147483647,
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The id of the project if setting layer is project. Requires the tenantId parameter",
+          "in" : "query",
+          "name" : "projectId",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "gwcpdev",
+            "maxLength" : 2147483647,
+            "minLength" : 1
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/DynamicConfigValueCreateUpdateModel"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          }
+        },
+        "summary" : "Creates a feature flag",
+        "tags" : [ "Feature Flags" ]
+      },
+      "put" : {
+        "description" : "Update the value of a feature flag for a given context.<br /><br />This operation requires GWCP user groups for all tenants and all projects granting one of the roles: **jaa.operators** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.feature-flags.update** and the scope: **any.tenant**.",
+        "operationId" : "updateFeatureFlag",
+        "parameters" : [ {
+          "example" : "xacme",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "xacme",
+            "maxLength" : 2147483647,
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The id of the project if setting layer is project.",
+          "in" : "query",
+          "name" : "projectId",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "gwcpdev",
+            "maxLength" : 2147483647,
+            "minLength" : 1
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/DynamicConfigValueCreateUpdateModel"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          }
+        },
+        "summary" : "Updates feature flags",
+        "tags" : [ "Feature Flags" ]
+      }
+    },
+    "/api/v1/insurance-suites" : {
+      "get" : {
+        "description" : "Gets metadata related to Insurance Suite.<br /><br />This operation requires GWCP user groups for the requested tenant and the requested project granting one of the roles: **jaa.readonly** or **jaa.developers** or **jaa.operators** or **jaa.admins** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.insurance-suites.read** and one of the scopes: **any.tenant** or **tenant.[requested tenant]**.",
+        "operationId" : "getInsuranceSuiteConfig",
+        "parameters" : [ {
+          "description" : "The id of the tenant.",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "xacme",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The id of the project.",
+          "in" : "query",
+          "name" : "projectId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "gwcpdev",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The IS environment",
+          "in" : "query",
+          "name" : "environment",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "dev",
+            "maxLength" : 2147483647,
+            "minLength" : 1
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/ISMetadataQueryModel"
+                  }
+                }
+              }
+            },
+            "description" : "Metadata successfully retrieved."
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          }
+        },
+        "summary" : "Gets IS metadata",
+        "tags" : [ "InsuranceSuites" ]
+      }
+    },
+    "/api/v1/ip-assignments" : {
+      "delete" : {
+        "description" : "Deletes IP Allowlist Assignments.<br /><br />This operation requires GWCP user groups for the requested tenant and any project granting one of the roles: **jaa.developers** or **jaa.admins** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.ip-assignments.delete** and one of the scopes: **any.tenant** or **tenant.[requested tenant]**.",
+        "operationId" : "deleteIPAssignment",
+        "parameters" : [ {
+          "description" : "The id of the tenant.",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "tenantId",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The id of the assignment.",
+          "in" : "query",
+          "name" : "assignmentId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "bad5abd7-8bcb-44e8-8031-0d0e10e37e12",
+            "minLength" : 1
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "IP Allowlist Assignment successfully deleted."
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          },
+          "404" : {
+            "description" : "Could not find IP allowlist assignment with given parameters."
+          }
+        },
+        "summary" : "Deletes IP Allowlist Assignments",
+        "tags" : [ "IP Allowlist" ]
+      },
+      "get" : {
+        "description" : "Gets all IP Allowlist Assignments for the given tenant.<br /><br />This operation requires GWCP user groups for the requested tenant and any project granting one of the roles: **jaa.readonly** or **jaa.developers** or **jaa.operators** or **jaa.admins** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.ip-assignments.read** and one of the scopes: **any.tenant** or **tenant.[requested tenant]**.",
+        "operationId" : "getIPAssignments",
+        "parameters" : [ {
+          "description" : "The id of the tenant.",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "tenantId",
+            "minLength" : 1
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/IPAssignmentQueryModel"
+                  }
+                }
+              }
+            },
+            "description" : "IP Allowlist Assignments data successfully retrieved."
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          },
+          "404" : {
+            "description" : "Could not find IP allowlist assignments with given parameters."
+          }
+        },
+        "summary" : "Gets IP Allowlist Assignments",
+        "tags" : [ "IP Allowlist" ]
+      },
+      "patch" : {
+        "description" : "Updates IP Allowlist Assignments.<br /><br />This operation requires GWCP user groups for the requested tenant and any project granting one of the roles: **jaa.developers** or **jaa.admins** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.ip-assignments.update** and one of the scopes: **any.tenant** or **tenant.[requested tenant]**.",
+        "operationId" : "updateIPAssignment",
+        "parameters" : [ {
+          "description" : "The id of the tenant.",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "tenantId",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The id of the assignment.",
+          "in" : "query",
+          "name" : "assignmentId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "bad5abd7-8bcb-44e8-8031-0d0e10e37e12",
+            "minLength" : 1
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/IPAssignmentUpdateModel"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/TaskQueryModel"
+                }
+              }
+            },
+            "description" : "IP Allowlist Assignment successfully updated."
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          },
+          "404" : {
+            "description" : "Could not find IP allowlist assignments with given parameters."
+          }
+        },
+        "summary" : "Updates IP Allowlist Assignments",
+        "tags" : [ "IP Allowlist" ]
+      },
+      "post" : {
+        "description" : "Creates IP Allowlist Assignments.<br /><br />This operation requires GWCP user groups for the requested tenant and any project granting one of the roles: **jaa.developers** or **jaa.admins** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.ip-assignments.create** and one of the scopes: **any.tenant** or **tenant.[requested tenant]**.",
+        "operationId" : "createIPAssignment",
+        "parameters" : [ {
+          "description" : "The id of the tenant.",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "tenantId",
+            "minLength" : 1
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/IPAssignmentCreationModel"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/TaskQueryModel"
+                }
+              }
+            },
+            "description" : "IP Allowlist Assignment creation successfully accepted."
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          },
+          "409" : {
+            "description" : "Conflict. Cannot create duplicate assignment for same planet class and application."
+          }
+        },
+        "summary" : "Creates IP Allowlist Assignments",
+        "tags" : [ "IP Allowlist" ]
+      }
+    },
+    "/api/v1/ip-groups" : {
+      "delete" : {
+        "description" : "Deletes IP Allowlist Groups.<br /><br />This operation requires GWCP user groups for the requested tenant and any project granting one of the roles: **jaa.admins** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.ip-groups.delete** and one of the scopes: **any.tenant** or **tenant.[requested tenant]**.",
+        "operationId" : "deleteIPGroup",
+        "parameters" : [ {
+          "description" : "The id of the tenant.",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "tenantId",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The id of the group.",
+          "in" : "query",
+          "name" : "groupId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "42a00a52-89b5-4e6d-9cb9-0bcb61a2f4fc",
+            "minLength" : 1
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "IP Allowlist Group successfully deleted."
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          },
+          "404" : {
+            "description" : "Could not find IP allowlist group with given parameters."
+          },
+          "409" : {
+            "description" : "Cannot delete a group that is currently assigned."
+          }
+        },
+        "summary" : "Deletes IP Allowlist Groups",
+        "tags" : [ "IP Allowlist" ]
+      },
+      "get" : {
+        "description" : "Gets all IP Allowlist Groups for the given tenant, or a single group if the group id is given.<br /><br />This operation requires GWCP user groups for the requested tenant and any project granting one of the roles: **jaa.readonly** or **jaa.developers** or **jaa.operators** or **jaa.admins** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.ip-groups.read** and one of the scopes: **any.tenant** or **tenant.[requested tenant]**.",
+        "operationId" : "getIPGroups",
+        "parameters" : [ {
+          "description" : "The id of the tenant.",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "tenantId",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The id of the group.",
+          "in" : "query",
+          "name" : "groupId",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "42a00a52-89b5-4e6d-9cb9-0bcb61a2f4fc",
+            "maxLength" : 2147483647,
+            "minLength" : 1
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/IPGroupQueryModel"
+                  }
+                }
+              }
+            },
+            "description" : "IP Allowlist Groups data successfully retrieved."
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          },
+          "404" : {
+            "description" : "Could not find IP allowlist groups with given parameters."
+          }
+        },
+        "summary" : "Gets IP Allowlist Groups",
+        "tags" : [ "IP Allowlist" ]
+      },
+      "patch" : {
+        "description" : "Updates IP Allowlist Groups.<br /><br />This operation requires GWCP user groups for the requested tenant and any project granting one of the roles: **jaa.admins** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.ip-groups.update** and one of the scopes: **any.tenant** or **tenant.[requested tenant]**.",
+        "operationId" : "updateIPGroup",
+        "parameters" : [ {
+          "description" : "The id of the tenant.",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "tenantId",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The id of the group.",
+          "in" : "query",
+          "name" : "groupId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "42a00a52-89b5-4e6d-9cb9-0bcb61a2f4fc",
+            "minLength" : 1
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/IPGroupUpdateModel"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "IP Allowlist Group successfully updated."
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          },
+          "404" : {
+            "description" : "Could not find IP allowlist group with given parameters."
+          }
+        },
+        "summary" : "Updates IP Allowlist Groups",
+        "tags" : [ "IP Allowlist" ]
+      },
+      "post" : {
+        "description" : "Creates IP Allowlist Groups.<br /><br />This operation requires GWCP user groups for the requested tenant and any project granting one of the roles: **jaa.developers** or **jaa.admins** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.ip-groups.create** and one of the scopes: **any.tenant** or **tenant.[requested tenant]**.",
+        "operationId" : "createIPGroup",
+        "parameters" : [ {
+          "description" : "The id of the tenant.",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "tenantId",
+            "minLength" : 1
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/IPGroupCreationModel"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "IP Allowlist Group creation successfully accepted."
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          },
+          "409" : {
+            "description" : "Conflict. IP Group already exists."
+          }
+        },
+        "summary" : "Creates IP Allowlist Groups",
+        "tags" : [ "IP Allowlist" ]
+      }
+    },
+    "/api/v1/template-submissions" : {
+      "get" : {
+        "description" : "List any submissions related to a Jutro app.<br /><br />This operation requires GWCP user groups for the requested tenant and any project granting one of the roles: **jaa.readonly** or **jaa.developers** or **jaa.operators** or **jaa.admins** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.template-submissions.read** and one of the scopes: **any.tenant** or **tenant.[requested tenant]**.",
+        "operationId" : "getTemplateSubmissions",
+        "parameters" : [ {
+          "description" : "The id of the tenant.",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "xacme",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The id of the project.",
+          "in" : "query",
+          "name" : "projectId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "gwcpdev",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The name of the Jutro application to create a template from.",
+          "in" : "query",
+          "name" : "appName",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "appname",
+            "minLength" : 1
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/TemplateSubmissionQueryModel"
+                  }
+                }
+              }
+            },
+            "description" : "Template submission data successfully retrieved"
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          }
+        },
+        "summary" : "Lists template submissions",
+        "tags" : [ "Template Submissions" ]
+      },
+      "post" : {
+        "description" : "Submit a template to be reviewed by Guidewire.<br /><br />This operation requires GWCP user groups for the requested tenant and any project granting one of the roles: **jaa.developers** or **jaa.admins** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.template-submissions.create** and one of the scopes: **any.tenant** or **tenant.[requested tenant]**.",
+        "operationId" : "submitTemplate",
+        "parameters" : [ {
+          "description" : "The id of the tenant.",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "xacme",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The id of the project.",
+          "in" : "query",
+          "name" : "projectId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "gwcpdev",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The name of the Jutro application to create a template from.",
+          "in" : "query",
+          "name" : "appName",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "appname",
+            "minLength" : 1
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "multipart/form-data" : {
+              "encoding" : {
+                "submission" : {
+                  "contentType" : "application/json"
+                }
+              },
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "images" : {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string",
+                      "format" : "binary"
+                    }
+                  },
+                  "submission" : {
+                    "$ref" : "#/components/schemas/TemplateSubmissionModel"
+                  }
+                },
+                "required" : [ "images", "submission" ]
+              }
+            }
+          }
+        },
+        "responses" : {
+          "202" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/TaskQueryModel"
+                }
+              }
+            },
+            "description" : "Template submission accepted"
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          }
+        },
+        "summary" : "Submits template",
+        "tags" : [ "Template Submissions" ]
+      }
+    },
+    "/api/v1/tenant-tiers" : {
+      "get" : {
+        "description" : "Get Tenant Tiers data.<br /><br />This operation requires GWCP user groups for the requested tenant and any project granting one of the roles: **jaa.readonly** or **jaa.developers** or **jaa.operators** or **jaa.admins** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.tenant-tiers.read** and one of the scopes: **any.tenant** or **tenant.[requested tenant]**.",
+        "operationId" : "getTenantTiers",
+        "parameters" : [ {
+          "description" : "The id of the tenant.",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "xacme",
+            "minLength" : 1
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/TenantTierQueryModel"
+                  }
+                }
+              }
+            },
+            "description" : "Tenant Tier data successfully retrieved."
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          }
+        },
+        "summary" : "Tenant Tiers data",
+        "tags" : [ "Tenant Tiers" ]
+      }
+    },
+    "/api/v1/tokens" : {
+      "get" : {
+        "description" : "Retrieves an ad-hoc token for this GW user.<br /><br />This operation requires GWCP user groups for any tenant and any project granting one of the roles: **jaa.readonly** or **jaa.developers** or **jaa.operators** or **jaa.admins** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.tokens.read** and one of the scopes: **any.tenant** or **tenant.[requested tenant]**.",
+        "operationId" : "getToken",
+        "parameters" : [ {
+          "description" : "The token generation configuration preset.",
+          "in" : "query",
+          "name" : "preset",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "authentication"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/TokenQueryModel"
+                }
+              }
+            },
+            "description" : "Token successfully retrieved."
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          }
+        },
+        "summary" : "Retrieves an ad-hoc token for this GW user",
+        "tags" : [ "Tokens" ]
+      }
+    },
+    "/api/v1/vcs-refs" : {
+      "get" : {
+        "description" : "Retrieves all branches and tags for an app from the Bitbucket repository.<br /><br />This operation requires GWCP user groups for the requested tenant and the requested project granting one of the roles: **jaa.readonly** or **jaa.developers** or **jaa.operators** or **jaa.admins** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.vcs-refs.read** and one of the scopes: **any.tenant** or **tenant.[requested tenant]**.",
+        "operationId" : "getBranchesData",
+        "parameters" : [ {
+          "description" : "The id of the tenant.",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "xacme",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The id of the project.",
+          "in" : "query",
+          "name" : "projectId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "gwcpdev",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The name of the Jutro application.",
+          "in" : "query",
+          "name" : "appName",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "appname"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }
+              }
+            },
+            "description" : "VCS references data successfully retrieved."
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          },
+          "404" : {
+            "description" : "Could not find branch data with given parameters."
+          }
+        },
+        "summary" : "Retrieves branches and tags",
+        "tags" : [ "VCS" ]
+      }
+    },
+    "/api/v2/auth-configurations" : {
+      "get" : {
+        "description" : "Retrieves auth configuration for a specific Jutro app.<br /><br />This operation requires GWCP user groups for the requested tenant and the requested project granting one of the roles: **jaa.readonly** or **jaa.developers** or **jaa.operators** or **jaa.admins** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.auth-configurations.read** and one of the scopes: **any.tenant** or **tenant.[requested tenant]**.",
+        "operationId" : "getAuthConfiguration",
+        "parameters" : [ {
+          "description" : "The id of the tenant",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "xacme",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The id of the project.",
+          "in" : "query",
+          "name" : "projectId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "gwcpdev",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The name of the Jutro application.",
+          "in" : "query",
+          "name" : "appName",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "appname",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The project class associated to the auth configuration.",
+          "in" : "query",
+          "name" : "projectClass",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "dev",
+            "maxLength" : 2147483647,
+            "minLength" : 1
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/AuthConfigQueryModel"
+                }
+              }
+            },
+            "description" : "Auth configuration data successfully retrieved."
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          },
+          "404" : {
+            "description" : "Could not find auth configuration data with given parameters."
+          }
+        },
+        "summary" : "Retrieves auth configuration data.",
+        "tags" : [ "Auth Configurations" ]
+      },
+      "put" : {
+        "description" : "Updates the auth config for a Jutro application.<br /><br />This operation requires GWCP user groups for the requested tenant and the requested project granting one of the roles: **jaa.admins** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.auth-configurations.update** and one of the scopes: **any.tenant** or **tenant.[requested tenant]**.",
+        "operationId" : "updateAuthConfiguration",
+        "parameters" : [ {
+          "description" : "The tenant id linked to the application.",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "xacme",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The id of the project linked to the application.",
+          "in" : "query",
+          "name" : "projectId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "gwcpdev",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The name of the Jutro application.",
+          "in" : "query",
+          "name" : "appName",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "appname",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The project class associated to the auth configuration.",
+          "in" : "query",
+          "name" : "projectClass",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "dev",
+            "maxLength" : 2147483647,
+            "minLength" : 1
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/AuthConfigUpdateModel"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Auth config data successfully updated."
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          },
+          "404" : {
+            "description" : "Auth config with given params does not exist."
+          }
+        },
+        "summary" : "Updates Jutro application auth config",
+        "tags" : [ "Auth Configurations" ]
+      }
+    },
+    "/api/v2/builds" : {
+      "get" : {
+        "description" : "Retrieves builds for a specific Jutro application.<br /><br />This operation requires GWCP user groups for the requested tenant and any project granting one of the roles: **jaa.readonly** or **jaa.developers** or **jaa.operators** or **jaa.admins** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.builds.read** and one of the scopes: **any.tenant** or **tenant.[requested tenant]**.",
+        "operationId" : "listBuilds",
+        "parameters" : [ {
+          "description" : "The id of the tenant.",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "xacme",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The id of the project.",
+          "in" : "query",
+          "name" : "projectId",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "gwcpdev",
+            "maxLength" : 2147483647,
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The name of the Jutro application to get builds for.",
+          "in" : "query",
+          "name" : "appName",
+          "required" : false,
+          "schema" : {
+            "type" : "array",
+            "example" : "appname",
+            "items" : {
+              "type" : "string",
+              "example" : "appname"
+            },
+            "uniqueItems" : true
+          }
+        }, {
+          "description" : "The number of the build.",
+          "in" : "query",
+          "name" : "buildNumber",
+          "required" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : 1
+          }
+        }, {
+          "description" : "The endDate of the build",
+          "in" : "query",
+          "name" : "endDate",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "format" : "date-time",
+            "example" : "2011-12-03T10:15:30Z"
+          }
+        }, {
+          "example" : 0,
+          "in" : "query",
+          "name" : "page",
+          "required" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 0,
+            "example" : 0
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BuildQueryPage"
+                }
+              }
+            },
+            "description" : "Project data successfully retrieved."
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          },
+          "404" : {
+            "description" : "Project with given id does not exist."
+          }
+        },
+        "summary" : "Retrieves builds",
+        "tags" : [ "Builds" ]
+      }
+    },
+    "/api/v2/configurations" : {
+      "get" : {
+        "description" : "Gets general front-end configuration.<br /><br />This operation requires GWCP user groups for the requested tenant and any project granting one of the roles: **jaa.readonly** or **jaa.developers** or **jaa.operators** or **jaa.admins** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.configurations.read** and one of the scopes: **any.tenant** or **tenant.[requested tenant]**.",
+        "operationId" : "getConfig",
+        "parameters" : [ {
+          "description" : "The id of the tenant.",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "xacme",
+            "minLength" : 1
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "example" : "{\n  \"appsLimit\": 480,\n  \"deploymentsLimit\": 480,\n  \"preprodPromotionsLimit\": 40,\n  \"prodPromotionsLimit\": 40,\n  \"appNameRegex\": \"^([a-z0-9]){1,10}$\",\n  \"customDomainRegex\": \"^(\\*\\.)?(((?!-)[A-Za-z0-9-]{0,62}[A-Za-z0-9])\\.)+((?!-)[A-Za-z0-9-]{1,62}[A-Za-z0-9])$\",\n  \"authGroupNameCharLimit\": 255,\n  \"appNamesBlocklist\": \"billingcenter,claimcenter,configuration,contactmanager,guidewiretestingframework,policycenter\",\n  \"defaultInputCharLimit\": 255\n}"
+                }
+              }
+            },
+            "description" : "Configuration successfully retrieved."
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          }
+        },
+        "summary" : "Gets configuration",
+        "tags" : [ "Configurations" ]
+      }
+    },
+    "/api/v2/deployment-variables" : {
+      "get" : {
+        "description" : "Retrieves default deployment variables for specific Jutro application.<br /><br />This operation requires GWCP user groups for the requested tenant and the requested project granting one of the roles: **jaa.readonly** or **jaa.developers** or **jaa.operators** or **jaa.admins** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.deployment-variables.read** and one of the scopes: **any.tenant** or **tenant.[requested tenant]**.",
+        "operationId" : "listDeploymentVariables",
+        "parameters" : [ {
+          "description" : "The id of the tenant.",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "xacme",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The id of the project.",
+          "in" : "query",
+          "name" : "projectId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "gwcpdev",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The name of the Jutro application to get deployment variables for.",
+          "in" : "query",
+          "name" : "appName",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "appname",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The project class.",
+          "in" : "query",
+          "name" : "projectClass",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "dev",
+            "maxLength" : 2147483647,
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The planet name for the target IS instance used for the app backend.",
+          "in" : "query",
+          "name" : "insuranceSuiteEnvironment",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "insuranceSuiteEnvironment",
+            "maxLength" : 2147483647,
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The commit hash of the build to deploy, used to prepopulate environment variables for deployment based on source code",
+          "in" : "query",
+          "name" : "gitRef",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "p07332b348b",
+            "maxLength" : 2147483647,
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The configuration group id for BFF to be provisioned for this deployment",
+          "in" : "query",
+          "name" : "bffConfigurationGroup",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid",
+            "example" : "017e12ef-9c13-740a-ae8a-c87eee21edc0"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/DeploymentVariablesQueryModel"
+                }
+              }
+            },
+            "description" : "Deployment variables successfully retrieved."
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          }
+        },
+        "summary" : "Retrieves default deployment variables",
+        "tags" : [ "Deployment variables" ]
+      }
+    },
+    "/api/v2/jutro-editor/has-published-versions" : {
+      "get" : {
+        "description" : "Checks to see if the applications editor project has published versions.<br /><br />This operation requires GWCP user groups for the requested tenant and the requested project granting one of the roles: **jaa.readonly** or **jaa.developers** or **jaa.operators** or **jaa.admins** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.applications.read** and one of the scopes: **any.tenant** or **tenant.[requested tenant]**.",
+        "operationId" : "hasPublishedVersions",
+        "parameters" : [ {
+          "description" : "The id of the tenant.",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "xacme",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The id of the project.",
+          "in" : "query",
+          "name" : "projectId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "gwcpdev"
+          }
+        }, {
+          "description" : "The editor id associated to the jutro application",
+          "in" : "query",
+          "name" : "appName",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "appname"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "boolean"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "summary" : "Checks to see if the applications editor project has published versions",
+        "tags" : [ "Jutro Editor" ]
+      }
+    },
+    "/api/v2/jutro-editor/set-me-up" : {
+      "post" : {
+        "description" : "Sets up a user for Jutro Editor access and returns the Editor URL.<br /><br />This operation requires GWCP user groups for the requested tenant and the requested project granting one of the roles: **jaa.readonly** or **jaa.developers** or **jaa.operators** or **jaa.admins** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.applications.read** and one of the scopes: **any.tenant** or **tenant.[requested tenant]**.",
+        "operationId" : "plasmicJutroWebAppsUserIntegration",
+        "parameters" : [ {
+          "description" : "The id of the tenant.",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "xacme",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The id of the project.",
+          "in" : "query",
+          "name" : "projectId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "gwcpdev"
+          }
+        }, {
+          "description" : "The editor id associated to the jutro application",
+          "in" : "query",
+          "name" : "appName",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "appname"
+          }
+        }, {
+          "description" : "The deployed url of your jutro application",
+          "in" : "query",
+          "name" : "deployUrl",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "deployUrl"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "summary" : "Sets up a user for Jutro Editor access and returns the Editor URL.",
+        "tags" : [ "Jutro Editor" ]
+      }
+    },
+    "/api/v2/projects" : {
+      "get" : {
+        "description" : "Given tenant id and optional project id, retrieves complete projects data.<br /><br />This operation requires GWCP user groups for the requested tenant and any project granting one of the roles: **jaa.readonly** or **jaa.developers** or **jaa.operators** or **jaa.admins** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.projects.read** and one of the scopes: **any.tenant** or **tenant.[requested tenant]**.",
+        "operationId" : "getProjects",
+        "parameters" : [ {
+          "description" : "The id of the tenant.",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "xacme",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The id of the project.",
+          "in" : "query",
+          "name" : "projectId",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "gwcpdev",
+            "maxLength" : 2147483647,
+            "minLength" : 1
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/ProjectQueryModel"
+                  }
+                }
+              }
+            },
+            "description" : "Project data successfully retrieved."
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          },
+          "404" : {
+            "description" : "Project with given id does not exist."
+          }
+        },
+        "summary" : "Gets projects",
+        "tags" : [ "Projects" ]
+      }
+    },
+    "/api/v2/tasks" : {
+      "get" : {
+        "description" : "Lists tasks for a given project.<br /><br />This operation requires GWCP user groups for the requested tenant and the requested project granting one of the roles: **jaa.readonly** or **jaa.developers** or **jaa.operators** or **jaa.admins** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.tasks.read** and one of the scopes: **any.tenant** or **tenant.[requested tenant]**.",
+        "operationId" : "getTask",
+        "parameters" : [ {
+          "description" : "The id of the tenant.",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "xacme",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The id of the project linked to the task.",
+          "in" : "query",
+          "name" : "projectId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "gwcpdev",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The id of the task.",
+          "in" : "query",
+          "name" : "taskId",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "656607e7-3d78-433a-9981-b112054f34eb",
+            "maxLength" : 2147483647,
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The state of the tasks. Cannot be used along with the taskId",
+          "in" : "query",
+          "name" : "state",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "PENDING", "IN_PROGRESS", "COMPLETED", "FAILED" ],
+            "example" : "IN_PROGRESS",
+            "maxLength" : 2147483647,
+            "minLength" : 1
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/TaskQueryModel"
+                  }
+                }
+              }
+            },
+            "description" : "Tasks successfully retrieved."
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          }
+        },
+        "summary" : "Lists tasks",
+        "tags" : [ "Tasks" ]
+      }
+    },
+    "/api/v2/tenant-statistics" : {
+      "get" : {
+        "description" : "Retrieves tenant general statistics such as number of apps and deployments.<br /><br />This operation requires authentication and access control will be determined based on the associated token and payload.",
+        "operationId" : "getTenantStatistics",
+        "parameters" : [ {
+          "description" : "The id of the tenant.",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "xacme",
+            "maxLength" : 2147483647,
+            "minLength" : 1
+          }
+        }, {
+          "description" : "A visibility filter for the results, matching the IP allowlisting assignments. Defaults to \"all\".",
+          "in" : "query",
+          "name" : "visibility",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "default" : "all",
+            "enum" : [ "public", "private", "all", "public", "private", "all" ],
+            "example" : "all"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/TenantStatsOverviewQueryModel"
+                }
+              }
+            },
+            "description" : "Tenant data successfully retrieved."
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          },
+          "404" : {
+            "description" : "Could not find tenant data with given parameters."
+          }
+        },
+        "summary" : "Retrieves tenant general statistics",
+        "tags" : [ "TenantStatistics" ]
+      }
+    },
+    "/api/v3/applications" : {
+      "delete" : {
+        "description" : "Deletes Jutro application from the existing project.<br /><br />This operation requires GWCP user groups for the requested tenant and the requested project granting one of the roles: **jaa.admins** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.applications.delete** and one of the scopes: **any.tenant** or **tenant.[requested tenant]**.",
+        "operationId" : "deleteApplication",
+        "parameters" : [ {
+          "description" : "The id of the tenant.",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "xacme",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The id of the project linked to the application.",
+          "in" : "query",
+          "name" : "projectId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "gwcpdev",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The name of the Jutro application to delete.",
+          "in" : "query",
+          "name" : "appName",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "appname",
+            "minLength" : 1
+          }
+        } ],
+        "responses" : {
+          "202" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/TaskQueryModel"
+                }
+              }
+            },
+            "description" : "Deleting Jutro application process has successfully started."
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          }
+        },
+        "summary" : "Deletes Jutro application",
+        "tags" : [ "Applications" ]
+      },
+      "get" : {
+        "description" : "Retrieves Jutro applications from a specific project.<br /><br />This operation requires GWCP user groups for the requested tenant and any project granting one of the roles: **jaa.readonly** or **jaa.developers** or **jaa.operators** or **jaa.admins** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.applications.read** and one of the scopes: **any.tenant** or **tenant.[requested tenant]**.",
+        "operationId" : "listApplications",
+        "parameters" : [ {
+          "in" : "header",
+          "name" : "gw-language",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "default" : "en"
+          }
+        }, {
+          "description" : "The id of the tenant.",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "xacme",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The id of the project.",
+          "in" : "query",
+          "name" : "projectId",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "gwcpdev",
+            "maxLength" : 2147483647,
+            "minLength" : 1
+          }
+        }, {
+          "description" : "An optional name of a Jutro application to filter the results",
+          "in" : "query",
+          "name" : "appName",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "appname",
+            "maxLength" : 2147483647,
+            "minLength" : 1
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/ApplicationQueryModel"
+                  }
+                }
+              }
+            },
+            "description" : "Application data successfully retrieved."
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          },
+          "404" : {
+            "description" : "Could not find Application data with given parameters."
+          }
+        },
+        "summary" : "Retrieves Jutro applications",
+        "tags" : [ "Applications" ]
+      },
+      "post" : {
+        "description" : "Adds Jutro application to the existing project.<br /><br />This operation requires GWCP user groups for the requested tenant and the requested project granting one of the roles: **jaa.developers** or **jaa.admins** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.applications.create** and one of the scopes: **any.tenant** or **tenant.[requested tenant]**.",
+        "operationId" : "createApplication",
+        "parameters" : [ {
+          "description" : "The id of the tenant.",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "xacme",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The id of the project in which to create the application.",
+          "in" : "query",
+          "name" : "projectId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "gwcpdev",
+            "minLength" : 1
+          }
+        }, {
+          "in" : "header",
+          "name" : "gw-language",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "default" : "en"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ApplicationCreationModel"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "202" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/TaskQueryModel"
+                }
+              }
+            },
+            "description" : "Adding Jutro application process has successfully started."
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          }
+        },
+        "summary" : "Adds Jutro application",
+        "tags" : [ "Applications" ]
+      }
+    },
+    "/api/v3/cicd-configurations" : {
+      "get" : {
+        "description" : "Retrieves CICD Configurations for a specific application.<br /><br />This operation requires GWCP user groups for the requested tenant and the requested project granting one of the roles: **jaa.readonly** or **jaa.developers** or **jaa.operators** or **jaa.admins** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.cicd-configurations.read** and one of the scopes: **any.tenant** or **tenant.[requested tenant]**.",
+        "operationId" : "getConfiguration",
+        "parameters" : [ {
+          "description" : "The id of the tenant.",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "xacme",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The id of the project.",
+          "in" : "query",
+          "name" : "projectId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "gwcpdev",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The name of the Jutro application.",
+          "in" : "query",
+          "name" : "appName",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "appname"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/JutroApplicationConfigQueryModel"
+                }
+              }
+            },
+            "description" : "CICD configuration data successfully retrieved."
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          },
+          "404" : {
+            "description" : "Could not find Configuration data with given parameters."
+          }
+        },
+        "summary" : "Retrieves CICD Configuration for a specific application",
+        "tags" : [ "CICD Configurations" ]
+      },
+      "patch" : {
+        "description" : "Updates CICD Configurations for a specific application.<br /><br />This operation requires GWCP user groups for the requested tenant and the requested project granting one of the roles: **jaa.developers** or **jaa.admins** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.cicd-configurations.update** and one of the scopes: **any.tenant** or **tenant.[requested tenant]**.",
+        "operationId" : "patchConfiguration",
+        "parameters" : [ {
+          "description" : "The id of the tenant.",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "xacme",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The id of the project.",
+          "in" : "query",
+          "name" : "projectId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "gwcpdev",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The name of the Jutro Application.",
+          "in" : "query",
+          "name" : "appName",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "appname",
+            "minLength" : 1
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/JutroApplicationConfigUpdateModel"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/TaskQueryModel"
+                }
+              }
+            },
+            "description" : "CICD configuration data successfully patched."
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          },
+          "404" : {
+            "description" : "Could not find Configuration data to patch with the given parameters."
+          }
+        },
+        "summary" : "Updates CICD Configuration for a specific application",
+        "tags" : [ "CICD Configurations" ]
+      }
+    },
+    "/api/v3/promotions" : {
+      "delete" : {
+        "description" : "Triggers the demotion and undeployment of a Jutro Application.<br /><br />This operation requires GWCP user groups for the requested tenant and the requested project granting one of the roles: **jaa.admins** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.promotions.delete** and one of the scopes: **any.tenant** or **tenant.[requested tenant]**.",
+        "operationId" : "demoteAndUndeploy",
+        "parameters" : [ {
+          "description" : "The id of the tenant that the app was created for.",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "xacme",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The id of the project that the app was created for.",
+          "in" : "query",
+          "name" : "projectId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "gwcpdev",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The name of the Jutro application that is being undeployed.",
+          "in" : "query",
+          "name" : "appName",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "myapplication",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The promotion deployment request id to demote.",
+          "in" : "query",
+          "name" : "deploymentRequestId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "8a8a8a8a-8a8a-8a8a-8a8a-8a8a8a8a8a8a",
+            "minLength" : 1
+          }
+        } ],
+        "responses" : {
+          "202" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/TaskQueryModel"
+                }
+              }
+            },
+            "description" : "Demotion & Undeploy process has successfully started."
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          }
+        },
+        "summary" : "Demotes and Undeploys a Jutro application",
+        "tags" : [ "Promotions" ]
+      },
+      "get" : {
+        "description" : "Retrieves most recent promotion for each planet and target project class.<br /><br />This operation requires GWCP user groups for the requested tenant and any project granting one of the roles: **jaa.readonly** or **jaa.developers** or **jaa.operators** or **jaa.admins** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.promotions.read** and one of the scopes: **any.tenant** or **tenant.[requested tenant]**.",
+        "operationId" : "listPromotions",
+        "parameters" : [ {
+          "description" : "The id of the tenant.",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "xacme",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The id of the project where the app was created.",
+          "in" : "query",
+          "name" : "projectId",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "gwcpdev",
+            "maxLength" : 2147483647,
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The name of the Jutro application to get promotions for.",
+          "in" : "query",
+          "name" : "appName",
+          "required" : false,
+          "schema" : {
+            "type" : "array",
+            "example" : "appname",
+            "items" : {
+              "type" : "string",
+              "example" : "appname"
+            },
+            "uniqueItems" : true
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/PromotionAndDeploymentQueryModel"
+                  }
+                }
+              }
+            },
+            "description" : "Promotion(s) data successfully retrieved."
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          }
+        },
+        "summary" : "Retrieves promotions",
+        "tags" : [ "Promotions" ]
+      },
+      "post" : {
+        "description" : "Triggers a promotion and deployment for the Jutro Application.<br /><br />This operation requires GWCP user groups for the requested tenant and the requested project granting one of the roles: **jaa.admins** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.promotions.create** and one of the scopes: **any.tenant** or **tenant.[requested tenant]**.",
+        "operationId" : "promote",
+        "parameters" : [ {
+          "description" : "The id of the tenant.",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "xacme",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The id of the project.",
+          "in" : "query",
+          "name" : "projectId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "gwcpdev",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The name of the Jutro application to promote.",
+          "in" : "query",
+          "name" : "appName",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "appname"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PromotionRequestModel"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "202" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/TaskQueryModel"
+                }
+              }
+            },
+            "description" : "Promotion process has successfully started."
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          },
+          "404" : {
+            "description" : "Not found. The supplied application build to deploy couldn't be found."
+          }
+        },
+        "summary" : "Promotes Jutro application",
+        "tags" : [ "Promotions" ]
+      }
+    },
+    "/api/v4/template-visibility-changes" : {
+      "delete" : {
+        "description" : "This operation requires authentication and access control will be determined based on the associated token and payload.",
+        "operationId" : "deleteTemplateVisibilityChange",
+        "parameters" : [ {
+          "description" : "The name of the template",
+          "in" : "query",
+          "name" : "templateName",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "jutro-template-starter-standalone",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The tenant to remove visibility of template for.",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "gwcpdev",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The version of the template to remove visibility for.",
+          "in" : "query",
+          "name" : "templateVersion",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "8.40.0",
+            "minLength" : 1
+          }
+        }, {
+          "in" : "header",
+          "name" : "GW-Access-Token",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "maxLength" : 2147483647,
+            "minLength" : 1
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Template visibility change successfully removed."
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          },
+          "404" : {
+            "description" : "No matching template."
+          }
+        },
+        "summary" : "Removes the visibility of a template",
+        "tags" : [ "TemplateVisibilityChanges" ]
+      },
+      "get" : {
+        "description" : "This operation requires authentication and access control will be determined based on the associated token and payload.",
+        "operationId" : "getVisibilityChanges",
+        "parameters" : [ {
+          "example" : "jutro-template-starter-standalone",
+          "in" : "query",
+          "name" : "templateName",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "jutro-template-starter-standalone"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/TemplateVisibilityQueryModel"
+                  }
+                }
+              }
+            },
+            "description" : "Template visibility data successfully retrieved."
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          },
+          "404" : {
+            "description" : "No matching template."
+          }
+        },
+        "summary" : "Lists the visibility of a template",
+        "tags" : [ "TemplateVisibilityChanges" ]
+      },
+      "post" : {
+        "description" : "This operation requires authentication and access control will be determined based on the associated token and payload.",
+        "operationId" : "addTemplateVisibilityChange",
+        "parameters" : [ {
+          "in" : "header",
+          "name" : "GW-Access-Token",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "maxLength" : 2147483647,
+            "minLength" : 1
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/TemplateVisibilityChangeModel"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Template visibility change successfully added."
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          },
+          "404" : {
+            "description" : "No matching template."
+          }
+        },
+        "summary" : "Changes the visibility of a template",
+        "tags" : [ "TemplateVisibilityChanges" ]
+      }
+    },
+    "/api/v5/deployments" : {
+      "delete" : {
+        "description" : "Triggers the undeploy for the Jutro Application.<br /><br />This operation requires GWCP user groups for the requested tenant and the requested project granting one of the roles: **jaa.developers** or **jaa.admins** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.deployments.delete** and one of the scopes: **any.tenant** or **tenant.[requested tenant]**.",
+        "operationId" : "undeploy",
+        "parameters" : [ {
+          "description" : "The id of the tenant.",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "xacme",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The id of the project.",
+          "in" : "query",
+          "name" : "projectId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "gwcpdev",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The name of the Jutro application to undeploy.",
+          "in" : "query",
+          "name" : "appName",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "appname",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The deployment request id to undeploy.",
+          "in" : "query",
+          "name" : "deploymentRequestId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "8a8a8a8a-8a8a-8a8a-8a8a-8a8a8a8a8a8a",
+            "minLength" : 1
+          }
+        } ],
+        "responses" : {
+          "202" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/TaskQueryModel"
+                }
+              }
+            },
+            "description" : "Undeployment process has successfully started."
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          }
+        },
+        "summary" : "Undeploys Jutro application",
+        "tags" : [ "Deployments" ]
+      },
+      "get" : {
+        "description" : "Retrieves last deployment of a specific Jutro application grouped by planets.<br /><br />This operation requires GWCP user groups for the requested tenant and any project granting one of the roles: **jaa.readonly** or **jaa.developers** or **jaa.operators** or **jaa.admins** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.deployments.read** and one of the scopes: **any.tenant** or **tenant.[requested tenant]**.",
+        "operationId" : "listDeployments",
+        "parameters" : [ {
+          "description" : "The id of the tenant.",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "xacme",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The id of the project.",
+          "in" : "query",
+          "name" : "projectId",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "gwcpdev",
+            "maxLength" : 2147483647,
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The name of the Jutro application to get deployments for.",
+          "in" : "query",
+          "name" : "appName",
+          "required" : false,
+          "schema" : {
+            "type" : "array",
+            "example" : "appname",
+            "items" : {
+              "type" : "string",
+              "example" : "appname"
+            },
+            "uniqueItems" : true
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/DeploymentsQueryPage"
+                }
+              }
+            },
+            "description" : "Deployment(s) data successfully retrieved."
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          }
+        },
+        "summary" : "Retrieves deployments",
+        "tags" : [ "Deployments" ]
+      },
+      "post" : {
+        "description" : "Triggers the deploy for the Jutro Application.<br /><br />This operation requires GWCP user groups for the requested tenant and the requested project granting one of the roles: **jaa.developers** or **jaa.admins** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.deployments.create** and one of the scopes: **any.tenant** or **tenant.[requested tenant]**.",
+        "operationId" : "deploy",
+        "parameters" : [ {
+          "description" : "The id of the tenant.",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "xacme",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The id of the project.",
+          "in" : "query",
+          "name" : "projectId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "gwcpdev",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The name of the Jutro application to deploy.",
+          "in" : "query",
+          "name" : "appName",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "appname"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/DeploymentRequestModel"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "202" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/TaskQueryModel"
+                }
+              }
+            },
+            "description" : "Deployment process has successfully started."
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          },
+          "404" : {
+            "description" : "Not found. The supplied application build to deploy couldn't be found."
+          }
+        },
+        "summary" : "Deploys Jutro application",
+        "tags" : [ "Deployments" ]
+      }
+    },
+    "/api/v5/templates" : {
+      "delete" : {
+        "description" : "This operation requires authentication and access control will be determined based on the associated token and payload.",
+        "operationId" : "deleteTemplate",
+        "parameters" : [ {
+          "description" : "The name of the template.",
+          "in" : "query",
+          "name" : "templateName",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "jutro-template-starter-standalone",
+            "minLength" : 1
+          }
+        }, {
+          "description" : "The version of the template.",
+          "in" : "query",
+          "name" : "templateVersion",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "8.29.1",
+            "minLength" : 1
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Deleted Jutro application template successfully"
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          }
+        },
+        "summary" : "Deletes Jutro application template",
+        "tags" : [ "Templates" ]
+      },
+      "get" : {
+        "description" : "This operation requires GWCP user groups for the requested tenant and any project granting one of the roles: **jaa.readonly** or **jaa.developers** or **jaa.operators** or **jaa.admins** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.templates.read** and one of the scopes: **any.tenant** or **tenant.[requested tenant]**.",
+        "operationId" : "listTemplates",
+        "parameters" : [ {
+          "in" : "header",
+          "name" : "gw-language",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "default" : "en"
+          }
+        }, {
+          "description" : "Filters templates to ones that are visible to this tenant",
+          "in" : "query",
+          "name" : "tenantId",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "maxLength" : 2147483647,
+            "minLength" : 1
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/TemplateQueryModel"
+                  }
+                }
+              }
+            },
+            "description" : "Template data successfully retrieved."
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          }
+        },
+        "summary" : "Retrieves Jutro templates",
+        "tags" : [ "Templates" ]
+      },
+      "post" : {
+        "description" : "This operation requires GWCP user groups for all tenants and all projects granting one of the roles: **jaa.operators** or **jaa.sysadmins**.<br />\nAlternatively, this operation requires the scope **jaa.templates.create** and the scope: **any.tenant**.",
+        "operationId" : "registerTemplate",
+        "parameters" : [ {
+          "in" : "header",
+          "name" : "gw-language",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "default" : "en"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/TemplateCreationModel"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/TemplateQueryModel"
+                }
+              }
+            },
+            "description" : "Added Jutro application template."
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          }
+        },
+        "summary" : "Adds Jutro application template",
+        "tags" : [ "Templates" ]
+      },
+      "put" : {
+        "description" : "This operation requires authentication and access control will be determined based on the associated token and payload.",
+        "operationId" : "updateTemplate",
+        "parameters" : [ {
+          "in" : "header",
+          "name" : "gw-language",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "default" : "en"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/TemplateCreationModel"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/TemplateQueryModel"
+                }
+              }
+            },
+            "description" : "Updated Jutro application template."
+          },
+          "400" : {
+            "description" : "Bad request. At least one of the parameters is incorrect."
+          },
+          "401" : {
+            "description" : "Unauthorized. User needs to have a valid token."
+          },
+          "403" : {
+            "description" : "Forbidden. User does not have sufficient permissions."
+          },
+          "404" : {
+            "description" : "Template not found."
+          }
+        },
+        "summary" : "Updates Jutro application template",
+        "tags" : [ "Templates" ]
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "ApplicationCloningModel" : {
+        "type" : "object",
+        "description" : "Jutro application cloning data object.",
+        "properties" : {
+          "description" : {
+            "type" : "string",
+            "maxLength" : 255,
+            "minLength" : 0
+          },
+          "displayName" : {
+            "type" : "string",
+            "maxLength" : 64,
+            "minLength" : 0
+          },
+          "environment" : {
+            "type" : "string"
+          },
+          "insuranceSuiteEnvironment" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "name" ]
+      },
+      "ApplicationCreationModel" : {
+        "type" : "object",
+        "description" : "Jutro application data object.",
+        "properties" : {
+          "description" : {
+            "type" : "string",
+            "maxLength" : 255,
+            "minLength" : 0
+          },
+          "displayName" : {
+            "type" : "string",
+            "maxLength" : 64,
+            "minLength" : 0
+          },
+          "environment" : {
+            "type" : "string"
+          },
+          "insuranceSuiteEnvironment" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "templateName" : {
+            "type" : "string"
+          },
+          "templateVersion" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "name", "templateName", "templateVersion" ]
+      },
+      "ApplicationQueryModel" : {
+        "type" : "object",
+        "properties" : {
+          "authProperties" : {
+            "$ref" : "#/components/schemas/AuthQueryModel"
+          },
+          "buildManagement" : {
+            "type" : "string"
+          },
+          "createdBy" : {
+            "type" : "string"
+          },
+          "createdByName" : {
+            "type" : "string"
+          },
+          "creationTimestamp" : {
+            "type" : "string"
+          },
+          "currentTask" : {
+            "$ref" : "#/components/schemas/TaskQueryModel"
+          },
+          "defaultBranch" : {
+            "type" : "string"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "displayName" : {
+            "type" : "string"
+          },
+          "editorProjectId" : {
+            "type" : "string"
+          },
+          "jutroCoreVersion" : {
+            "type" : "string"
+          },
+          "jutroUpgrade" : {
+            "$ref" : "#/components/schemas/UpgradeProposalQueryModel"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "projectId" : {
+            "type" : "string"
+          },
+          "sharedPackagesBuildManagement" : {
+            "type" : "string"
+          },
+          "sharedPackagesSourceCode" : {
+            "type" : "string"
+          },
+          "sourceAppName" : {
+            "type" : "string"
+          },
+          "sourceCode" : {
+            "type" : "string"
+          },
+          "sourceGitRef" : {
+            "type" : "string"
+          },
+          "state" : {
+            "type" : "string",
+            "enum" : [ "ADDING", "READY", "ERROR", "DELETING", "UPDATING" ]
+          },
+          "template" : {
+            "$ref" : "#/components/schemas/TemplateQueryModel"
+          },
+          "tenantId" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "displayName", "name", "projectId", "state", "tenantId" ]
+      },
+      "AuthConfigQueryModel" : {
+        "type" : "object",
+        "properties" : {
+          "groups" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "scopes" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        },
+        "required" : [ "groups", "scopes" ]
+      },
+      "AuthConfigUpdateModel" : {
+        "type" : "object",
+        "description" : "Auth configuration data object.",
+        "properties" : {
+          "groups" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "scopes" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "trustedOrigins" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }
+      },
+      "AuthQueryModel" : {
+        "type" : "object",
+        "properties" : {
+          "authClientId" : {
+            "type" : "string"
+          },
+          "authServerUri" : {
+            "type" : "string"
+          }
+        }
+      },
+      "BackendApisConfigGroupQueryModel" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "projectClass" : {
+            "type" : "string",
+            "enum" : [ "dev", "preprod", "prod", "dr" ]
+          },
+          "projectId" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string",
+            "enum" : [ "GLOBAL", "APP" ]
+          }
+        },
+        "required" : [ "id", "name", "projectClass", "type" ]
+      },
+      "BuildQueryModel" : {
+        "type" : "object",
+        "properties" : {
+          "appName" : {
+            "type" : "string"
+          },
+          "authorEmail" : {
+            "type" : "string"
+          },
+          "authorName" : {
+            "type" : "string"
+          },
+          "branch" : {
+            "type" : "string"
+          },
+          "buildNumber" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "buildStatus" : {
+            "type" : "string",
+            "enum" : [ "FINISHED", "FAILED", "STARTED" ]
+          },
+          "commitHash" : {
+            "type" : "string"
+          },
+          "endDate" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "startDate" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        },
+        "required" : [ "appName", "buildNumber", "buildStatus" ]
+      },
+      "BuildQueryPage" : {
+        "type" : "object",
+        "properties" : {
+          "builds" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/BuildQueryModel"
+            }
+          },
+          "currentPage" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "totalPages" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        },
+        "required" : [ "builds", "currentPage", "totalPages" ]
+      },
+      "CodeMetadataQueryModel" : {
+        "type" : "object",
+        "properties" : {
+          "nodeVersion" : {
+            "type" : "string"
+          }
+        }
+      },
+      "DeploymentQueryModel" : {
+        "type" : "object",
+        "properties" : {
+          "allowedCorsOrigins" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "appName" : {
+            "type" : "string"
+          },
+          "bffConfigurationGroup" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "build" : {
+            "$ref" : "#/components/schemas/BuildQueryModel"
+          },
+          "deployUserEmail" : {
+            "type" : "string"
+          },
+          "deployUserName" : {
+            "type" : "string"
+          },
+          "deploymentDate" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "deploymentType" : {
+            "type" : "string"
+          },
+          "environment" : {
+            "type" : "string"
+          },
+          "environmentVariables" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "fullyQualifiedDomainNames" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "insuranceSuiteEnvironment" : {
+            "type" : "string"
+          },
+          "isImmutable" : {
+            "type" : "boolean"
+          },
+          "requestId" : {
+            "type" : "string"
+          },
+          "responseHeaders" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "status" : {
+            "type" : "string",
+            "enum" : [ "Deploying", "Deployed", "Deploy Failed", "Undeploying", "Undeployed", "Undeploy Failed" ]
+          },
+          "statusMessage" : {
+            "$ref" : "#/components/schemas/IntlMessageObject"
+          }
+        },
+        "required" : [ "allowedCorsOrigins", "appName", "build", "deploymentType", "environment", "environmentVariables", "fullyQualifiedDomainNames", "isImmutable", "requestId", "responseHeaders" ]
+      },
+      "DeploymentRequestModel" : {
+        "type" : "object",
+        "description" : "Jutro application data object.",
+        "properties" : {
+          "allowedCorsOrigins" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "bffConfigurationGroup" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "buildNumber" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "deploymentType" : {
+            "type" : "string",
+            "enum" : [ "APIGW", "CDN" ]
+          },
+          "domainDelegationId" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "environment" : {
+            "type" : "string"
+          },
+          "environmentVariables" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "fullyQualifiedDomainNames" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "insuranceSuiteEnvironment" : {
+            "type" : "string"
+          },
+          "isImmutable" : {
+            "type" : "boolean"
+          },
+          "responseHeaders" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          }
+        },
+        "required" : [ "allowedCorsOrigins", "buildNumber", "environment", "environmentVariables", "fullyQualifiedDomainNames", "isImmutable", "responseHeaders" ]
+      },
+      "DeploymentVariablesQueryModel" : {
+        "type" : "object",
+        "properties" : {
+          "environmentVariables" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "integrationVariables" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/IntegrationVariable"
+            }
+          },
+          "responseHeaders" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          }
+        },
+        "required" : [ "environmentVariables", "integrationVariables", "responseHeaders" ]
+      },
+      "DeploymentVariablesQueryModelV1" : {
+        "type" : "object",
+        "properties" : {
+          "environmentVariables" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "responseHeaders" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          }
+        },
+        "required" : [ "environmentVariables", "responseHeaders" ]
+      },
+      "DeploymentsQueryPage" : {
+        "type" : "object",
+        "properties" : {
+          "currentPage" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "deployments" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/DeploymentQueryModel"
+            }
+          },
+          "totalPages" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        },
+        "required" : [ "currentPage", "deployments", "totalPages" ]
+      },
+      "DomainDelegationAssignmentQueryModel" : {
+        "type" : "object",
+        "properties" : {
+          "appName" : {
+            "type" : "string"
+          },
+          "assignmentId" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "delegationId" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "domains" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "projectClass" : {
+            "type" : "string",
+            "enum" : [ "dev", "preprod", "prod", "dr" ]
+          },
+          "subdomainName" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "appName", "assignmentId", "delegationId", "domains", "projectClass" ]
+      },
+      "DomainDelegationAssignmentRequestModel" : {
+        "type" : "object",
+        "properties" : {
+          "delegationId" : {
+            "type" : "string",
+            "format" : "uuid",
+            "example" : "01927203-79f2-7121-b852-3c398ffe861a"
+          },
+          "subdomainName" : {
+            "type" : "string",
+            "example" : "abc",
+            "maxLength" : 63,
+            "minLength" : 0,
+            "pattern" : "^([a-z0-9]+(-?[a-z0-9])*)(\\.?([a-z0-9]+(-?[a-z0-9])*))*"
+          }
+        },
+        "required" : [ "delegationId" ]
+      },
+      "DomainDelegationDetailsQueryModel" : {
+        "type" : "object",
+        "properties" : {
+          "certificateStatus" : {
+            "type" : "string",
+            "enum" : [ "PENDING_VALIDATION", "ISSUED", "INACTIVE", "EXPIRED", "VALIDATION_TIMED_OUT", "REVOKED", "FAILED", "NOT_FOUND", "UNKNOWN" ]
+          },
+          "domainsDetails" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/DomainNameServersQueryModel"
+            }
+          }
+        },
+        "required" : [ "certificateStatus", "domainsDetails" ]
+      },
+      "DomainDelegationQueryModel" : {
+        "type" : "object",
+        "properties" : {
+          "delegationId" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "domains" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "projectClass" : {
+            "type" : "string",
+            "enum" : [ "dev", "preprod", "prod", "dr" ]
+          },
+          "projectId" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "delegationId", "domains", "projectClass", "projectId" ]
+      },
+      "DomainNameServersQueryModel" : {
+        "type" : "object",
+        "properties" : {
+          "domainName" : {
+            "type" : "string"
+          },
+          "nameServers" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        },
+        "required" : [ "domainName", "nameServers" ]
+      },
+      "DynamicConfigValueCreateUpdateModel" : {
+        "type" : "object",
+        "description" : "Feature flag value creation object.",
+        "properties" : {
+          "comment" : {
+            "type" : "string"
+          },
+          "enabled" : {
+            "type" : "boolean"
+          },
+          "name" : {
+            "type" : "string",
+            "example" : "flagName",
+            "pattern" : "^[a-zA-Z0-9-]+$"
+          },
+          "props" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          }
+        },
+        "required" : [ "enabled", "name", "props" ]
+      },
+      "EnvironmentQueryModel" : {
+        "type" : "object",
+        "properties" : {
+          "environmentClass" : {
+            "type" : "string",
+            "enum" : [ "PROD", "PREPROD", "CI", "UAT", "QA", "PERF", "STAGING", "INT", "DEV", "LOCAL" ]
+          },
+          "id" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "id" ]
+      },
+      "FlagValueQueryModel" : {
+        "type" : "object",
+        "properties" : {
+          "enabled" : {
+            "type" : "boolean"
+          },
+          "props" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          }
+        },
+        "required" : [ "enabled", "props" ]
+      },
+      "GroupOverview" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "id", "name" ]
+      },
+      "IPAssignmentCreationModel" : {
+        "type" : "object",
+        "properties" : {
+          "appName" : {
+            "type" : "string"
+          },
+          "groups" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "open" : {
+            "type" : "boolean"
+          },
+          "planetClass" : {
+            "type" : "string",
+            "enum" : [ "prod", "other" ]
+          }
+        },
+        "required" : [ "appName", "groups", "open", "planetClass" ]
+      },
+      "IPAssignmentQueryModel" : {
+        "type" : "object",
+        "properties" : {
+          "appName" : {
+            "type" : "string"
+          },
+          "groups" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/GroupOverview"
+            }
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "lastAttempt" : {
+            "type" : "string"
+          },
+          "open" : {
+            "type" : "boolean"
+          },
+          "planetClass" : {
+            "type" : "string",
+            "enum" : [ "prod", "other" ]
+          },
+          "status" : {
+            "type" : "string",
+            "enum" : [ "PENDING", "IN_PROGRESS", "SUCCESS", "ERROR" ]
+          },
+          "tenantId" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "appName", "groups", "id", "lastAttempt", "open", "planetClass", "status", "tenantId" ]
+      },
+      "IPAssignmentUpdateModel" : {
+        "type" : "object",
+        "properties" : {
+          "groups" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "open" : {
+            "type" : "boolean"
+          }
+        },
+        "required" : [ "groups", "open" ]
+      },
+      "IPGroupCreationModel" : {
+        "type" : "object",
+        "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "networks" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        },
+        "required" : [ "description", "name", "networks" ]
+      },
+      "IPGroupQueryModel" : {
+        "type" : "object",
+        "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "networks" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "tenantId" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "description", "id", "name", "networks", "tenantId" ]
+      },
+      "IPGroupUpdateModel" : {
+        "type" : "object",
+        "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "networks" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        },
+        "required" : [ "networks" ]
+      },
+      "ISMetadata" : {
+        "type" : "object",
+        "properties" : {
+          "productName" : {
+            "type" : "string"
+          },
+          "supportedScopes" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ISScope"
+            }
+          }
+        },
+        "required" : [ "productName", "supportedScopes" ]
+      },
+      "ISMetadataQueryModel" : {
+        "type" : "object",
+        "properties" : {
+          "billingCenter" : {
+            "$ref" : "#/components/schemas/ISMetadata"
+          },
+          "claimCenter" : {
+            "$ref" : "#/components/schemas/ISMetadata"
+          },
+          "contactManager" : {
+            "$ref" : "#/components/schemas/ISMetadata"
+          },
+          "environment" : {
+            "type" : "string"
+          },
+          "policyCenter" : {
+            "$ref" : "#/components/schemas/ISMetadata"
+          }
+        },
+        "required" : [ "environment" ]
+      },
+      "ISScope" : {
+        "type" : "object",
+        "properties" : {
+          "message" : {
+            "$ref" : "#/components/schemas/IntlMessageObject"
+          },
+          "value" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "message", "value" ]
+      },
+      "IntegrationVariable" : {
+        "type" : "object",
+        "properties" : {
+          "configurationName" : {
+            "type" : "string"
+          },
+          "key" : {
+            "type" : "string"
+          },
+          "target" : {
+            "type" : "string"
+          },
+          "url" : {
+            "type" : "string"
+          },
+          "validatedUrl" : {
+            "type" : "boolean"
+          }
+        },
+        "required" : [ "key", "target", "url", "validatedUrl" ]
+      },
+      "IntlMessageObject" : {
+        "type" : "object",
+        "properties" : {
+          "args" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "defaultMessage" : {
+            "type" : "string",
+            "example" : "Template Title",
+            "minLength" : 1
+          },
+          "id" : {
+            "type" : "string",
+            "example" : "template.title.my.template.name",
+            "minLength" : 1
+          }
+        },
+        "required" : [ "defaultMessage", "id" ]
+      },
+      "JutroApplicationConfigQueryModel" : {
+        "type" : "object",
+        "properties" : {
+          "minCodeTestCoverage" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "privateRegistries" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "$ref" : "#/components/schemas/PrivateRegistryDetailsDTO"
+            }
+          },
+          "task" : {
+            "$ref" : "#/components/schemas/TaskQueryModel"
+          }
+        },
+        "required" : [ "minCodeTestCoverage", "privateRegistries" ]
+      },
+      "JutroApplicationConfigUpdateModel" : {
+        "type" : "object",
+        "description" : "Jutro application config object.",
+        "properties" : {
+          "minCodeTestCoverage" : {
+            "type" : "integer",
+            "format" : "int32",
+            "maximum" : 100,
+            "minimum" : 0
+          },
+          "privateRegistries" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "$ref" : "#/components/schemas/PrivateRegistryDetailsWithToken"
+            }
+          }
+        },
+        "required" : [ "minCodeTestCoverage" ]
+      },
+      "PrivateRegistryDetailsDTO" : {
+        "type" : "object",
+        "properties" : {
+          "scope" : {
+            "type" : "string"
+          },
+          "url" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "scope", "url" ]
+      },
+      "PrivateRegistryDetailsWithToken" : {
+        "type" : "object",
+        "properties" : {
+          "scope" : {
+            "type" : "string"
+          },
+          "token" : {
+            "type" : "string"
+          },
+          "url" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "scope", "url" ]
+      },
+      "ProjectQueryModel" : {
+        "type" : "object",
+        "properties" : {
+          "displayName" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "logicalId" : {
+            "type" : "string"
+          },
+          "projectClass" : {
+            "type" : "string",
+            "enum" : [ "dev", "preprod", "prod", "dr" ]
+          },
+          "relatedProjects" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ProjectQueryModel"
+            }
+          },
+          "state" : {
+            "type" : "string",
+            "enum" : [ "DELETING", "ERROR", "NOT_READY", "READY", "UPDATING" ]
+          },
+          "teamcityProjectId" : {
+            "type" : "string"
+          },
+          "tenant" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "displayName", "id", "projectClass", "state", "tenant" ]
+      },
+      "PromotionAndDeploymentQueryModel" : {
+        "type" : "object",
+        "properties" : {
+          "deployment" : {
+            "$ref" : "#/components/schemas/DeploymentQueryModel"
+          },
+          "promotion" : {
+            "$ref" : "#/components/schemas/PromotionQueryModel"
+          }
+        },
+        "required" : [ "promotion" ]
+      },
+      "PromotionQueryModel" : {
+        "type" : "object",
+        "properties" : {
+          "build" : {
+            "$ref" : "#/components/schemas/BuildQueryModel"
+          },
+          "createdBy" : {
+            "type" : "string"
+          },
+          "creationTimestamp" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "requestId" : {
+            "type" : "string"
+          },
+          "status" : {
+            "type" : "string"
+          },
+          "statusMessage" : {
+            "type" : "string"
+          },
+          "targetProjectClass" : {
+            "type" : "string",
+            "enum" : [ "dev", "preprod", "prod", "dr" ]
+          },
+          "targetProjectId" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "build", "createdBy", "creationTimestamp", "requestId", "targetProjectClass" ]
+      },
+      "PromotionRequestModel" : {
+        "type" : "object",
+        "description" : "Jutro application data object.",
+        "properties" : {
+          "deploymentData" : {
+            "$ref" : "#/components/schemas/DeploymentRequestModel"
+          },
+          "targetProjectClass" : {
+            "type" : "string",
+            "enum" : [ "dev", "preprod", "prod", "dr" ]
+          },
+          "targetProjectId" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "deploymentData", "targetProjectClass", "targetProjectId" ]
+      },
+      "SubTaskQueryModel" : {
+        "type" : "object",
+        "properties" : {
+          "message" : {
+            "$ref" : "#/components/schemas/IntlMessageObject"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "order" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "state" : {
+            "type" : "string",
+            "enum" : [ "PENDING", "IN_PROGRESS", "COMPLETED", "FAILED" ]
+          },
+          "title" : {
+            "$ref" : "#/components/schemas/IntlMessageObject"
+          }
+        },
+        "required" : [ "name", "order", "state", "title" ]
+      },
+      "TaskQueryModel" : {
+        "type" : "object",
+        "properties" : {
+          "appName" : {
+            "type" : "string"
+          },
+          "correlationId" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "projectId" : {
+            "type" : "string"
+          },
+          "status" : {
+            "type" : "string",
+            "enum" : [ "PENDING", "IN_PROGRESS", "COMPLETED", "FAILED" ]
+          },
+          "subTasks" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SubTaskQueryModel"
+            }
+          },
+          "tenantId" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string",
+            "enum" : [ "ADD_APPLICATION", "DELETE_APPLICATION", "DEPLOY_APPLICATION", "UNDEPLOY_APPLICATION", "PROMOTE_APPLICATION", "DEMOTE_APPLICATION", "CLONE_APPLICATION", "CREATE_IP_ASSIGNMENT", "UPDATE_IP_ASSIGNMENT", "DELETE_IP_ASSIGNMENT", "UPDATE_CICD_CONFIGURATION", "SUBMIT_TEMPLATE" ]
+          }
+        },
+        "required" : [ "id", "name", "projectId", "status", "subTasks", "tenantId", "type" ]
+      },
+      "TemplateAuthor" : {
+        "type" : "object",
+        "properties" : {
+          "authGroups" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "email" : {
+            "type" : "string",
+            "example" : "templateauthor@email.com",
+            "minLength" : 1
+          },
+          "name" : {
+            "type" : "string",
+            "example" : "Author Name",
+            "minLength" : 1
+          }
+        },
+        "required" : [ "email", "name" ]
+      },
+      "TemplateCreationModel" : {
+        "type" : "object",
+        "description" : "Jutro application template data object.",
+        "properties" : {
+          "author" : {
+            "$ref" : "#/components/schemas/TemplateAuthor"
+          },
+          "contentsUrl" : {
+            "type" : "string",
+            "example" : "https://artifactory.guidewire.com/artifactory/content-npm-dev-local/jutro-template-some-name/-/jutro-template-some-name-1.2.3.tgz",
+            "minLength" : 1
+          },
+          "embeddable" : {
+            "type" : "boolean"
+          },
+          "icon" : {
+            "type" : "string",
+            "example" : "gw-policy",
+            "pattern" : "^gw-[a-zA-Z0-9_-]+$"
+          },
+          "isSaasTemplate" : {
+            "type" : "boolean"
+          },
+          "jutroEditorId" : {
+            "type" : "string",
+            "example" : "4yXrOmEj3xxyRhUoDrCk12",
+            "pattern" : "^\\w+$"
+          },
+          "jutroVersion" : {
+            "type" : "string",
+            "example" : "8.7.0",
+            "minLength" : 1,
+            "pattern" : "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$"
+          },
+          "name" : {
+            "type" : "string",
+            "example" : "jutro-template-some-name",
+            "minLength" : 1,
+            "pattern" : "^[a-z0-9-@/]+$"
+          },
+          "repoUrl" : {
+            "type" : "string",
+            "example" : "ssh://git@stash.guidewire.com/jpl/jutro-template-some-name.git",
+            "minLength" : 1,
+            "pattern" : "((git|ssh|http(s)?)|(git@[\\w\\.]+))(:(//)?)([\\w\\.@\\:/\\-~]+)(\\.git)(/)?"
+          },
+          "resources" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/TemplateResourceCreationModel"
+            }
+          },
+          "risksenseId" : {
+            "type" : "string",
+            "example" : 12345,
+            "pattern" : "^\\d+$"
+          },
+          "version" : {
+            "type" : "string",
+            "example" : "8.30.0",
+            "minLength" : 1,
+            "pattern" : "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$"
+          },
+          "visibility" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/TemplateVisibilityChangeModel"
+            }
+          }
+        },
+        "required" : [ "author", "contentsUrl", "embeddable", "isSaasTemplate", "jutroVersion", "name", "repoUrl", "resources", "version", "visibility" ]
+      },
+      "TemplateQueryModel" : {
+        "type" : "object",
+        "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "displayName" : {
+            "type" : "string"
+          },
+          "embeddable" : {
+            "type" : "boolean"
+          },
+          "icon" : {
+            "type" : "string"
+          },
+          "isSaasTemplate" : {
+            "type" : "boolean"
+          },
+          "jutroVersion" : {
+            "type" : "string"
+          },
+          "previewImages" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "projectName" : {
+            "type" : "string"
+          },
+          "templateVersion" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "description", "displayName", "embeddable", "jutroVersion", "previewImages", "projectName", "templateVersion" ]
+      },
+      "TemplateResourceCreationModel" : {
+        "type" : "object",
+        "properties" : {
+          "language" : {
+            "type" : "string",
+            "example" : "en",
+            "minLength" : 1,
+            "pattern" : "^([A-Za-z]{2,4}([_-][A-Za-z]{4})?([_-]([A-Za-z]{2}|[0-9]{3}))?|default)$"
+          },
+          "type" : {
+            "type" : "string",
+            "enum" : [ "DISPLAY_NAME", "DESCRIPTION", "PREVIEW_IMAGE" ]
+          },
+          "value" : {
+            "type" : "string",
+            "minLength" : 1
+          }
+        },
+        "required" : [ "language", "type", "value" ]
+      },
+      "TemplateSubmissionModel" : {
+        "type" : "object",
+        "description" : "Template submission data object.",
+        "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "displayName" : {
+            "type" : "string"
+          },
+          "embeddable" : {
+            "type" : "boolean"
+          },
+          "icon" : {
+            "type" : "string",
+            "example" : "gw-policy",
+            "pattern" : "^gw-[a-zA-Z0-9_-]+$"
+          },
+          "tenantVisibilityRequest" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        },
+        "required" : [ "displayName", "embeddable", "tenantVisibilityRequest" ]
+      },
+      "TemplateSubmissionQueryModel" : {
+        "type" : "object",
+        "properties" : {
+          "createdBy" : {
+            "type" : "string"
+          },
+          "createdByName" : {
+            "type" : "string"
+          },
+          "creationTimestamp" : {
+            "type" : "string"
+          },
+          "embeddable" : {
+            "type" : "boolean"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "jutroVersion" : {
+            "type" : "string"
+          },
+          "status" : {
+            "type" : "string",
+            "enum" : [ "SUBMITTED", "FAILED_SUBMISSION", "SUBMITTING" ]
+          },
+          "templateVersion" : {
+            "type" : "string"
+          },
+          "visibilityRequests" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        },
+        "required" : [ "creationTimestamp", "embeddable", "id", "jutroVersion", "status", "templateVersion", "visibilityRequests" ]
+      },
+      "TemplateVisibilityChangeModel" : {
+        "type" : "object",
+        "description" : "Template visibility change data object.",
+        "properties" : {
+          "templateName" : {
+            "type" : "string",
+            "example" : "jutro-template-some-name",
+            "minLength" : 1,
+            "pattern" : "^[a-z0-9-@/]+$"
+          },
+          "templateVersion" : {
+            "type" : "string",
+            "example" : "8.30.0",
+            "minLength" : 1,
+            "pattern" : "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$|\\*"
+          },
+          "tenantId" : {
+            "type" : "string",
+            "minLength" : 1
+          },
+          "visible" : {
+            "type" : "boolean"
+          }
+        },
+        "required" : [ "templateName", "templateVersion", "tenantId", "visible" ]
+      },
+      "TemplateVisibilityQueryModel" : {
+        "type" : "object",
+        "properties" : {
+          "createdBy" : {
+            "type" : "string"
+          },
+          "creationTimestamp" : {
+            "type" : "string"
+          },
+          "templateName" : {
+            "type" : "string"
+          },
+          "tenantId" : {
+            "type" : "string"
+          },
+          "version" : {
+            "type" : "string"
+          },
+          "visible" : {
+            "type" : "boolean"
+          }
+        },
+        "required" : [ "createdBy", "creationTimestamp", "templateName", "tenantId", "version", "visible" ]
+      },
+      "TenantStatisticsQueryModel" : {
+        "type" : "object",
+        "properties" : {
+          "appsCount" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "deploymentsCount" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "deploymentsCountPerApp" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "integer",
+              "format" : "int32"
+            }
+          },
+          "devCdnDeploymentsCount" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "devCdnDeploymentsCountPerApp" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "integer",
+              "format" : "int32"
+            }
+          },
+          "preprodPromotionsCount" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "preprodPromotionsCountPerApp" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "integer",
+              "format" : "int32"
+            }
+          },
+          "prodPromotionsCount" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "prodPromotionsCountPerApp" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "integer",
+              "format" : "int32"
+            }
+          }
+        },
+        "required" : [ "appsCount", "deploymentsCount", "deploymentsCountPerApp", "devCdnDeploymentsCount", "devCdnDeploymentsCountPerApp", "preprodPromotionsCount", "preprodPromotionsCountPerApp", "prodPromotionsCount", "prodPromotionsCountPerApp" ]
+      },
+      "TenantStatsOverviewQueryModel" : {
+        "type" : "object",
+        "properties" : {
+          "appsCount" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "deploymentsCount" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "devCdnDeploymentsCount" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "preprodPromotionsCount" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "prodPromotionsCount" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "tenants" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "$ref" : "#/components/schemas/TenantStatisticsQueryModel"
+            }
+          }
+        },
+        "required" : [ "appsCount", "deploymentsCount", "devCdnDeploymentsCount", "preprodPromotionsCount", "prodPromotionsCount", "tenants" ]
+      },
+      "TenantTierQueryModel" : {
+        "type" : "object",
+        "properties" : {
+          "tenantId" : {
+            "type" : "string"
+          },
+          "tier" : {
+            "type" : "string"
+          },
+          "tierDurationLimitDays" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "tierDurationRemainingDays" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "tierStartDate" : {
+            "type" : "string",
+            "format" : "date"
+          }
+        },
+        "required" : [ "tenantId" ]
+      },
+      "TokenQueryModel" : {
+        "type" : "object",
+        "properties" : {
+          "accessToken" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "accessToken" ]
+      },
+      "UpgradeProposalQueryModel" : {
+        "type" : "object",
+        "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "jutroCoreVersion" : {
+            "type" : "string"
+          },
+          "timestamp" : {
+            "type" : "string"
+          },
+          "title" : {
+            "type" : "string"
+          },
+          "url" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "url" ]
+      }
+    },
+    "securitySchemes" : {
+      "guidewire" : {
+        "flows" : {
+          "authorizationCode" : {
+            "authorizationUrl" : "https://guidewire-hub.oktapreview.com/oauth2/ausj9ftnbxOqfGU4U0h7/v1/authorize",
+            "scopes" : {
+              "groups" : "Obtains group memberships"
+            },
+            "tokenUrl" : "https://guidewire-hub.oktapreview.com/oauth2/ausj9ftnbxOqfGU4U0h7/v1/token"
+          }
+        },
+        "type" : "oauth2"
+      }
+    }
+  }
+}
