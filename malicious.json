@@ -5,5 +5,16 @@
     "version": "1.0.0",
     "description": "<img src=x onerror=alert(document.domain)>"
   },
-  "paths": {}
+  "paths": {
+    "/test": {
+      "get": {
+        "summary": "Test endpoint",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    }
+  }
 }
